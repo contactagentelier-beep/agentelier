@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agentelier — L'IA qui décroche à votre place</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@400;500;700;800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+    <style>
+        @font-face {
+            font-family: 'Cabinet Grotesk';
+            src: url('https://fonts.cdnfonts.com/css/cabinet-grotesk');
+        }
+
+        :root {
+            --black: #0a0a0a;
+            --white: #ffffff;
+            --gray-100: #f5f5f5;
+            --gray-200: #e5e5e5;
+            --gray-400: #a3a3a3;
+            --gray-500: #737373;
+            --gray-600: #525252;
+            --gray-800: #262626;
+            --gray-900: #171717;
+            --accent: #ff6b35;
+            --accent-light: #ff8c5a;
+            --accent-glow: rgba(255, 107, 53, 0.4);
+            --gradient-1: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+            --gradient-2: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-dark: linear-gradient(180deg, #0a0a0a 0%, #171717 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Cabinet Grotesk', 'Inter', -apple-system, sans-serif;
+            background: var(--black);
+            color: var(--white);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 32px;
+        }
+
+        /* Grain overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 24px 0;
+            z-index: 100;
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--white);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            letter-spacing: -0.02em;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .header-cta {
+            background: var(--white);
+            color: var(--black);
+            padding: 12px 28px;
+            border-radius: 100px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .header-cta:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 40px rgba(255, 255, 255, 0.2);
+        }
+
+        /* Hero */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 140px 0 100px;
+            overflow: hidden;
+        }
+
+        .hero-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 0;
+        }
+
+        .hero-bg .gradient-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.5;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .hero-bg .orb-1 {
+            width: 600px;
+            height: 600px;
+            background: var(--accent);
+            top: -200px;
+            right: -100px;
+            opacity: 0.15;
+        }
+
+        .hero-bg .orb-2 {
+            width: 400px;
+            height: 400px;
+            background: #667eea;
+            bottom: -100px;
+            left: -100px;
+            opacity: 0.1;
+            animation-delay: -4s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(30px, -30px) scale(1.05); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 107, 53, 0.1);
+            border: 1px solid rgba(255, 107, 53, 0.3);
+            color: var(--accent);
+            padding: 8px 20px;
+            border-radius: 100px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 32px;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .hero-badge .pulse {
+            width: 8px;
+            height: 8px;
+            background: var(--accent);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.5); }
+        }
+
+        .hero h1 {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 400;
+            line-height: 1.05;
+            margin-bottom: 32px;
+            letter-spacing: -0.03em;
+            animation: fadeInUp 0.8s ease-out 0.1s backwards;
+        }
+
+        .hero h1 em {
+            font-style: italic;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            color: var(--gray-400);
+            margin-bottom: 48px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            animation: fadeInUp 0.8s ease-out 0.2s backwards;
+        }
+
+        .hero-cta-group {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.8s ease-out 0.3s backwards;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--gradient-1);
+            color: var(--white);
+            padding: 18px 36px;
+            border-radius: 100px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 40px var(--accent-glow);
+        }
+
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: transparent;
+            color: var(--white);
+            padding: 18px 36px;
+            border-radius: 100px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.1rem;
+            border: 1px solid var(--gray-800);
+            transition: all 0.3s;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--gray-600);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 48px;
+            margin-top: 80px;
+            padding-top: 48px;
+            border-top: 1px solid var(--gray-800);
+            animation: fadeInUp 0.8s ease-out 0.4s backwards;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            font-size: 0.95rem;
+            color: var(--gray-500);
+            margin-top: 4px;
+        }
+
+        /* Problem Section */
+        .problem {
+            padding: 140px 0;
+            position: relative;
+        }
+
+        .section-label {
+            display: inline-block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--accent);
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: clamp(2.2rem, 5vw, 3.5rem);
+            font-weight: 400;
+            line-height: 1.15;
+            margin-bottom: 24px;
+            letter-spacing: -0.02em;
+        }
+
+        .section-subtitle {
+            font-size: 1.2rem;
+            color: var(--gray-400);
+            max-width: 550px;
+        }
+
+        .problem-header {
+            margin-bottom: 80px;
+        }
+
+        .problem-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .problem-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 24px;
+            padding: 40px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .problem-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .problem-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(255, 107, 53, 0.2);
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+        }
+
+        .problem-card:hover::before {
+            opacity: 1;
+        }
+
+        .problem-icon {
+            width: 64px;
+            height: 64px;
+            background: rgba(255, 107, 53, 0.1);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin-bottom: 24px;
+        }
+
+        .problem-card h3 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            letter-spacing: -0.01em;
+        }
+
+        .problem-card p {
+            color: var(--gray-400);
+            font-size: 1.05rem;
+            line-height: 1.7;
+        }
+
+        .problem-stat {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 8px 16px;
+            background: rgba(255, 107, 53, 0.1);
+            border-radius: 100px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        /* How it works */
+        .how-it-works {
+            padding: 140px 0;
+            background: var(--gray-900);
+            position: relative;
+        }
+
+        .how-it-works::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gray-800), transparent);
+        }
+
+        .how-header {
+            text-align: center;
+            margin-bottom: 100px;
+        }
+
+        .steps-container {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .steps-container::before {
+            content: '';
+            position: absolute;
+            top: 50px;
+            left: 15%;
+            right: 15%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent), var(--gray-800), var(--accent));
+            z-index: 0;
+        }
+
+        .step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            padding: 0 20px;
+        }
+
+        .step-number {
+            width: 100px;
+            height: 100px;
+            background: var(--black);
+            border: 2px solid var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Instrument Serif', serif;
+            font-size: 2.5rem;
+            color: var(--accent);
+            margin: 0 auto 32px;
+            position: relative;
+        }
+
+        .step-number::after {
+            content: '';
+            position: absolute;
+            inset: -8px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 107, 53, 0.2);
+        }
+
+        .step h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .step p {
+            color: var(--gray-400);
+            font-size: 1rem;
+            max-width: 280px;
+            margin: 0 auto;
+        }
+
+        /* Features */
+        .features {
+            padding: 140px 0;
+            position: relative;
+        }
+
+        .features-header {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--gray-800);
+            border-radius: 20px;
+            padding: 36px;
+            display: flex;
+            gap: 24px;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: var(--gray-700);
+            transform: translateX(8px);
+        }
+
+        .feature-icon {
+            width: 52px;
+            height: 52px;
+            background: var(--gradient-1);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            flex-shrink: 0;
+        }
+
+        .feature-content h3 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .feature-content p {
+            color: var(--gray-400);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* Pricing */
+        .pricing {
+            padding: 140px 0;
+            background: var(--gray-900);
+            position: relative;
+        }
+
+        .pricing::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gray-800), transparent);
+        }
+
+        .pricing-header {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .pricing-cards {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 32px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--gray-800);
+            border-radius: 28px;
+            padding: 48px;
+            position: relative;
+            transition: all 0.4s;
+        }
+
+        .pricing-card.featured {
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.1) 0%, rgba(255, 107, 53, 0.02) 100%);
+            border-color: var(--accent);
+            transform: scale(1.02);
+        }
+
+        .pricing-card.featured::before {
+            content: 'Populaire';
+            position: absolute;
+            top: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--gradient-1);
+            color: white;
+            padding: 6px 20px;
+            border-radius: 100px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-8px);
+        }
+
+        .pricing-card.featured:hover {
+            transform: scale(1.02) translateY(-8px);
+        }
+
+        .pricing-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--gray-400);
+            margin-bottom: 8px;
+        }
+
+        .pricing-price {
+            font-size: 4rem;
+            font-weight: 700;
+            line-height: 1;
+            margin-bottom: 8px;
+            letter-spacing: -0.03em;
+        }
+
+        .pricing-price span {
+            font-size: 1.2rem;
+            font-weight: 400;
+            color: var(--gray-500);
+        }
+
+        .pricing-desc {
+            color: var(--gray-500);
+            font-size: 1rem;
+            margin-bottom: 32px;
+            padding-bottom: 32px;
+            border-bottom: 1px solid var(--gray-800);
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin-bottom: 40px;
+        }
+
+        .pricing-features li {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 12px 0;
+            font-size: 1rem;
+            color: var(--gray-300);
+        }
+
+        .pricing-features .check {
+            width: 22px;
+            height: 22px;
+            background: rgba(255, 107, 53, 0.15);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+            font-size: 0.75rem;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .pricing-cta {
+            display: block;
+            width: 100%;
+            padding: 18px;
+            text-align: center;
+            border-radius: 14px;
+            font-weight: 600;
+            font-size: 1.05rem;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .pricing-card:not(.featured) .pricing-cta {
+            background: var(--white);
+            color: var(--black);
+        }
+
+        .pricing-card:not(.featured) .pricing-cta:hover {
+            transform: scale(1.02);
+        }
+
+        .pricing-card.featured .pricing-cta {
+            background: var(--gradient-1);
+            color: var(--white);
+        }
+
+        .pricing-card.featured .pricing-cta:hover {
+            box-shadow: 0 20px 40px var(--accent-glow);
+            transform: scale(1.02);
+        }
+
+        /* Guarantee */
+        .guarantee {
+            text-align: center;
+            margin-top: 60px;
+            padding: 32px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 16px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .guarantee-icon {
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+        }
+
+        .guarantee h4 {
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+        }
+
+        .guarantee p {
+            color: var(--gray-400);
+            font-size: 1rem;
+        }
+
+        /* Final CTA */
+        .final-cta {
+            padding: 160px 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .final-cta .gradient-orb {
+            position: absolute;
+            width: 800px;
+            height: 800px;
+            background: var(--accent);
+            border-radius: 50%;
+            filter: blur(150px);
+            opacity: 0.08;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .final-cta-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .final-cta h2 {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 400;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            letter-spacing: -0.02em;
+        }
+
+        .final-cta h2 em {
+            font-style: italic;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .final-cta p {
+            font-size: 1.25rem;
+            color: var(--gray-400);
+            margin-bottom: 48px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .final-form {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .final-form input {
+            flex: 1;
+            min-width: 280px;
+            padding: 18px 24px;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--gray-800);
+            border-radius: 14px;
+            color: var(--white);
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+
+        .final-form input::placeholder {
+            color: var(--gray-500);
+        }
+
+        .final-form input:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: rgba(255, 107, 53, 0.05);
+        }
+
+        .final-form button {
+            padding: 18px 36px;
+            font-size: 1rem;
+            font-weight: 600;
+            background: var(--gradient-1);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+
+        .final-form button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 40px var(--accent-glow);
+        }
+
+        .form-success {
+            display: none;
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            color: #22c55e;
+            padding: 20px 32px;
+            border-radius: 14px;
+            font-weight: 500;
+            font-size: 1.1rem;
+        }
+
+        .form-success.show {
+            display: block;
+        }
+
+        .final-form.hidden {
+            display: none;
+        }
+
+        /* Footer */
+        footer {
+            padding: 48px 0;
+            border-top: 1px solid var(--gray-800);
+            text-align: center;
+        }
+
+        footer p {
+            color: var(--gray-500);
+            font-size: 0.95rem;
+        }
+
+        footer a {
+            color: var(--gray-400);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        footer a:hover {
+            color: var(--accent);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .problem-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .steps-container {
+                flex-direction: column;
+                gap: 48px;
+            }
+
+            .steps-container::before {
+                display: none;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pricing-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .pricing-card.featured {
+                transform: none;
+            }
+
+            .pricing-card.featured:hover {
+                transform: translateY(-8px);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 20px;
+            }
+
+            .header-cta {
+                display: none;
+            }
+
+            .hero {
+                padding: 120px 0 80px;
+            }
+
+            .hero-stats {
+                flex-direction: column;
+                gap: 32px;
+            }
+
+            .problem, .how-it-works, .features, .pricing {
+                padding: 100px 0;
+            }
+
+            .final-cta {
+                padding: 100px 0;
+            }
+
+            .final-form {
+                flex-direction: column;
+            }
+
+            .final-form input {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <a href="#" class="logo">
+                    <div class="logo-icon">⚡</div>
+                    Agentelier
+                </a>
+                <a href="#pricing" class="header-cta">Voir les tarifs</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-bg">
+            <div class="gradient-orb orb-1"></div>
+            <div class="gradient-orb orb-2"></div>
+        </div>
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <span class="pulse"></span>
+                    Accès anticipé — Places limitées
+                </div>
+                <h1>Chaque appel manqué<br>vous coûte <em>de l'argent</em></h1>
+                <p class="hero-subtitle">L'assistant IA qui répond à vos clients 24h/24, qualifie les urgences et prend les RDV. Même quand vous êtes les mains dans la tuyauterie.</p>
+                
+                <div class="hero-cta-group">
+                    <a href="#pricing" class="btn-primary">
+                        Démarrer maintenant
+                        <span>→</span>
+                    </a>
+                    <a href="#how" class="btn-secondary">
+                        Comment ça marche
+                    </a>
+                </div>
+
+                <div class="hero-stats">
+                    <div class="stat">
+                        <div class="stat-value">24/7</div>
+                        <div class="stat-label">Disponibilité totale</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">&lt;3s</div>
+                        <div class="stat-label">Temps de réponse</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">100%</div>
+                        <div class="stat-label">Appels traités</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Problem Section -->
+    <section class="problem">
+        <div class="container">
+            <div class="problem-header">
+                <span class="section-label">Le problème</span>
+                <h2 class="section-title">Pendant que vous travaillez,<br>vos clients appellent ailleurs</h2>
+                <p class="section-subtitle">Chaque sonnerie sans réponse, c'est un chantier qui part chez le concurrent.</p>
+            </div>
+
+            <div class="problem-grid">
+                <div class="problem-card">
+                    <div class="problem-icon">📵</div>
+                    <h3>Impossible de décrocher</h3>
+                    <p>Vous êtes sous un évier, sur un toit, ou en train de souder. Le téléphone sonne. Vous ne pouvez pas répondre. Le client raccroche.</p>
+                    <span class="problem-stat">~30% d'appels manqués en moyenne</span>
+                </div>
+                <div class="problem-card">
+                    <div class="problem-icon">💸</div>
+                    <h3>Un client perdu = 500€ envolés</h3>
+                    <p>Dépannage, installation, entretien... Chaque appel non décroché représente des centaines d'euros qui partent à la concurrence.</p>
+                    <span class="problem-stat">500€ à 3000€ par opportunité</span>
+                </div>
+                <div class="problem-card">
+                    <div class="problem-icon">😰</div>
+                    <h3>Stress permanent</h3>
+                    <p>Le soir, le weekend, en vacances... Vous ne pouvez jamais vraiment déconnecter. Les urgences n'attendent pas.</p>
+                    <span class="problem-stat">68% des artisans stressés par les appels</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How it works -->
+    <section class="how-it-works" id="how">
+        <div class="container">
+            <div class="how-header">
+                <span class="section-label">La solution</span>
+                <h2 class="section-title">Un assistant qui décroche<br>comme vous le feriez</h2>
+                <p class="section-subtitle">Configuration en 10 minutes. Résultats immédiats.</p>
+            </div>
+
+            <div class="steps-container">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Transférez vos appels</h3>
+                    <p>Un simple renvoi d'appel quand vous êtes occupé. Rien à installer.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>L'IA répond et qualifie</h3>
+                    <p>Elle comprend le problème, évalue l'urgence, pose les questions clés.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Vous recevez tout par SMS</h3>
+                    <p>Client, problème, urgence, coordonnées. Vous décidez de la suite.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="features">
+        <div class="container">
+            <div class="features-header">
+                <span class="section-label">Fonctionnalités</span>
+                <h2 class="section-title">Conçu pour votre métier</h2>
+                <p class="section-subtitle">Pas un chatbot générique. Un assistant qui parle plomberie.</p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🔧</div>
+                    <div class="feature-content">
+                        <h3>Vocabulaire métier</h3>
+                        <p>Fuite, chauffe-eau, vanne, chaudière en erreur E03... L'IA comprend et pose les bonnes questions de diagnostic.</p>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🚨</div>
+                    <div class="feature-content">
+                        <h3>Tri des urgences</h3>
+                        <p>Fuite active = alerte immédiate. Demande de devis = message classique. Vous gérez vos priorités.</p>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📅</div>
+                    <div class="feature-content">
+                        <h3>Prise de RDV automatique</h3>
+                        <p>Connecté à votre agenda, l'IA propose des créneaux et confirme par SMS au client.</p>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💬</div>
+                    <div class="feature-content">
+                        <h3>SMS & WhatsApp</h3>
+                        <p>Les clients écrivent aussi. L'IA gère tous les canaux et vous remonte l'essentiel.</p>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💰</div>
+                    <div class="feature-content">
+                        <h3>Indications tarifaires</h3>
+                        <p>Donnez vos fourchettes de prix. L'IA informe le client sans vous engager.</p>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🌙</div>
+                    <div class="feature-content">
+                        <h3>Disponible 24h/24, 7j/7</h3>
+                        <p>Weekends, nuits, jours fériés. Votre assistant ne dort jamais.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing -->
+    <section class="pricing" id="pricing">
+        <div class="container">
+            <div class="pricing-header">
+                <span class="section-label">Tarifs</span>
+                <h2 class="section-title">Un client récupéré = rentabilisé</h2>
+                <p class="section-subtitle">Sans engagement. Annulez quand vous voulez.</p>
+            </div>
+
+            <div class="pricing-cards">
+                <div class="pricing-card">
+                    <p class="pricing-name">Essentiel</p>
+                    <p class="pricing-price">199€ <span>/ mois</span></p>
+                    <p class="pricing-desc">Pour les artisans solo qui veulent ne plus rater d'appels.</p>
+                    
+                    <ul class="pricing-features">
+                        <li><span class="check">✓</span> Jusqu'à 100 appels/mois</li>
+                        <li><span class="check">✓</span> Qualification des urgences</li>
+                        <li><span class="check">✓</span> Résumés par SMS</li>
+                        <li><span class="check">✓</span> Configuration personnalisée</li>
+                        <li><span class="check">✓</span> Support par email</li>
+                    </ul>
+                    
+                    <a href="#final" class="pricing-cta">Commencer</a>
+                </div>
+
+                <div class="pricing-card featured">
+                    <p class="pricing-name">Pro</p>
+                    <p class="pricing-price">349€ <span>/ mois</span></p>
+                    <p class="pricing-desc">Pour les entreprises qui veulent automatiser leur secrétariat.</p>
+                    
+                    <ul class="pricing-features">
+                        <li><span class="check">✓</span> Appels illimités</li>
+                        <li><span class="check">✓</span> SMS & WhatsApp inclus</li>
+                        <li><span class="check">✓</span> Prise de RDV automatique</li>
+                        <li><span class="check">✓</span> Intégration agenda (Google, Outlook)</li>
+                        <li><span class="check">✓</span> Indications tarifaires</li>
+                        <li><span class="check">✓</span> Tableau de bord analytics</li>
+                        <li><span class="check">✓</span> Support prioritaire 7j/7</li>
+                    </ul>
+                    
+                    <a href="#final" class="pricing-cta">Commencer</a>
+                </div>
+            </div>
+
+            <div class="guarantee">
+                <div class="guarantee-icon">🛡️</div>
+                <h4>Garantie 30 jours satisfait ou remboursé</h4>
+                <p>Si vous ne récupérez pas au moins 2 clients le premier mois, on vous rembourse intégralement.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="final-cta" id="final">
+        <div class="gradient-orb"></div>
+        <div class="container">
+            <div class="final-cta-content">
+                <h2>Prêt à ne plus jamais<br>rater un <em>client</em> ?</h2>
+                <p>Inscrivez-vous maintenant pour bénéficier du tarif de lancement et être prévenu dès l'ouverture.</p>
+                
+                <form class="final-form" id="final-form">
+                    <input type="email" placeholder="Votre email professionnel" required>
+                    <button type="submit">Rejoindre la liste →</button>
+                </form>
+                <div class="form-success" id="final-success">
+                    ✅ Parfait ! On vous recontacte très vite avec votre accès.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>© 2026 Agentelier — Une question ? <a href="mailto:contact@agentelier.fr">contact@agentelier.fr</a></p>
+        </div>
+    </footer>
+
+    <script>
+        // Form handling
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const email = this.querySelector('input[type="email"]').value;
+                console.log('Email captured:', email);
+                
+                this.classList.add('hidden');
+                this.nextElementSibling.classList.add('show');
+            });
+        });
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Animate on scroll (simple version)
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.problem-card, .step, .feature-card, .pricing-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+            observer.observe(el);
+        });
+    </script>
+
+</body>
+</html>
